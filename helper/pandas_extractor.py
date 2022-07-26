@@ -20,6 +20,7 @@ class PandasExtractor(Extractor):
     sort = None
     order = None
     fields = None
+    path = ""
 
     def __init__(self, path):
         super().__init__()
@@ -107,7 +108,7 @@ class PandasExtractor(Extractor):
         """
         query = self.parse_query(query_string)
         result = self.query(query)
-        if self.sort:
+        if self.sort and "error" not in result:
             asc = True if self.order == "asc" else False
             result = result.sort_values(by=self.sort, ascending=asc)
 

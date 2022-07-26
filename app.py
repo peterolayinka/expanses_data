@@ -3,15 +3,18 @@ from helper.pandas_extractor import PandasExtractor
 
 app = Flask(__name__)
 
-@app.route("/expanses_data")
+def get_path():
+    return "data/expanses.csv"
+
+@app.route("/expanses_data", methods=["GET"])
 def expanses_data():
-    extractor = PandasExtractor("data/expanses.csv")
+    extractor = PandasExtractor(get_path())
     data = extractor.filter_data(request.args)
+
     if 'error' in data:
-        return jsonify(data)
+        return jsonify(data), 400
 
     result = data.to_dict(orient="records")
-
 
     if extractor.fields:
         # This is used to return the last value as a single value result
@@ -23,10 +26,9 @@ def expanses_data():
 
     return jsonify(result)
 
-@app.route("/agregate")
-def agregate():
-    extractor = PandasExtractor("data/expanses.csv")
+@app.route("/agregate", methods=["GET"])
+def aggregate():
+    extractor = PandasExtractor(get_path())
     data = extractor.aggregate_data(request.args)
-    if 'error' in data:
-        return jsonify(data)
+
     return jsonify(data.to_dict(orient="records"))
